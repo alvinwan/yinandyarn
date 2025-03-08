@@ -29,6 +29,14 @@ public class PlayerController : MonoBehaviour
         new string[]
         {
             "......",
+            "......",
+            ".01020",
+            "......",
+            "......"
+        },
+        new string[]
+        {
+            "......",
             "..00..",
             "001020",
             "..00..",
@@ -38,8 +46,8 @@ public class PlayerController : MonoBehaviour
         {
             "......",
             "...0..",
-            ".0002.",
-            ".0100.",
+            "000020",
+            "001000",
             "......"
         }
     };
