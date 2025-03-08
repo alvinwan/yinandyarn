@@ -129,10 +129,11 @@ public class PlayerController : MonoBehaviour
             if (leftPlayerPos.y == gridHalfHeight && rightPlayerPos.y == gridHalfHeight - 1 && rightPlayerPos.x == leftPlayerPos.x && currentLevelIndex == 1)
             {
                 AdvanceLevel();
+            } else {
+                leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1);
+                rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1);
+                UpdatePlayerPositions();
             }
-            leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1);
-            rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1);
-            UpdatePlayerPositions();
         }
 
         // Optional: press L to switch to the next level manually.
