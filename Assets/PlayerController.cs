@@ -19,20 +19,20 @@ public class PlayerController : MonoBehaviour
         },
         new string[]
         {
-            "..1...",
-            "..0...",
-            "..0...",
-            "..0...",
-            "..0...",
-            "..2..."
+            "..1..",
+            "..0..",
+            "..0..",
+            "..0..",
+            "..0..",
+            "..2.."
         },
         new string[]
         {
-            "1.0000",
-            "000000",
-            ".000.0",
-            "000000",
-            "000020"
+            "..00..",
+            ".0002.",
+            ".0100.",
+            ".0000.",
+            "......"
         }
     };
 
@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private int gridWidth;
     private int gridHeight;
     private int gridHalfWidth;
+    private int gridHalfHeight;
 
     // Spacing between cells (e.g., in pixels)
     public float cellSpacing = 150f;
@@ -119,7 +120,6 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            int gridHalfHeight = gridHeight / 2;  // TODO: This calculate should be moved out somewhere
             if (leftPlayerPos.y == gridHalfHeight && rightPlayerPos.y == gridHalfHeight - 1 && currentLevelIndex == 1)
             {
                 AdvanceLevel();
@@ -188,8 +188,16 @@ public class PlayerController : MonoBehaviour
                 gridWidth = row.Length;
         }
 
-        Debug.Assert(gridWidth > 0 && gridHeight > 0 && gridWidth % 2 == 0, "Invalid level layout");
-        gridHalfWidth = gridWidth / 2;
+        Debug.Assert(gridWidth > 0 && gridHeight > 0, "Level layout is empty.");
+        if (currentLevelIndex == 1)
+        {
+            Debug.Assert(gridHeight % 2 == 0, "Grid height must be even for vertical levels.");
+            gridHalfHeight = gridHeight / 2;
+        } else {
+            Debug.Assert(gridWidth % 2 == 0, "Grid width must be even for horizontal levels.");
+            gridHalfWidth = gridWidth / 2;
+        }
+
 
         occupancyGrid = new bool[gridWidth, gridHeight];
 
