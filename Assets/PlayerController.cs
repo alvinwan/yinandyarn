@@ -11,20 +11,20 @@ public class PlayerController : MonoBehaviour
     {
         new string[]
         {
-            ".1.000",
-            "000000",
-            "000000",
-            "000020",
-            ".00000"
+            "......",
+            "......",
+            "100002",
+            "......",
+            "......"
         },
         new string[]
         {
-            "....10",
-            ".00000",
-            "000000",
-            "000000",
-            "000020",
-            ".....0"
+            "..1...",
+            "..0...",
+            "..0...",
+            "..0...",
+            "..0...",
+            "..2..."
         },
         new string[]
         {
@@ -64,6 +64,11 @@ public class PlayerController : MonoBehaviour
     // Occupancy grid: true indicates a cell is part of the level.
     private bool[,] occupancyGrid;
 
+    // List of level backgrounds
+    public GameObject[] levelBackgrounds;
+    public GameObject verticalBackground;
+    public GameObject horizontalBackground;
+
     void Awake()
     {
         leftPlayerRect = GetComponent<RectTransform>();
@@ -92,7 +97,7 @@ public class PlayerController : MonoBehaviour
         {
             // If the left player is at the rightmost cell of its half and the right player
             // is at the leftmost cell of its half, and we press right, advance to the next level.
-            if (leftPlayerPos.x == gridHalfWidth - 1 && rightPlayerPos.x == gridHalfWidth)
+            if (leftPlayerPos.x == gridHalfWidth - 1 && rightPlayerPos.x == gridHalfWidth && currentLevelIndex != 1)
             {
                 AdvanceLevel();
             }
@@ -114,6 +119,11 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
+            int gridHalfHeight = gridHeight / 2;  // TODO: This calculate should be moved out somewhere
+            if (leftPlayerPos.y == gridHalfHeight && rightPlayerPos.y == gridHalfHeight - 1 && currentLevelIndex == 1)
+            {
+                AdvanceLevel();
+            }
             leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1);
             rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1);
             UpdatePlayerPositions();
@@ -144,6 +154,29 @@ public class PlayerController : MonoBehaviour
             Destroy(indicator);
         }
         positionIndicators.Clear();
+
+        // Load the level background.
+        if (levelBackgrounds.Length > 0) {
+            foreach (var background in levelBackgrounds)
+            {
+                background.SetActive(false);
+            }
+            if (index < levelBackgrounds.Length) {
+                levelBackgrounds[index].SetActive(true);
+            }
+        }
+
+        // TODO: Hard-coded for now. Only show vertical background for level 1.
+        if (index == 1)
+        {
+            verticalBackground.SetActive(true);
+            horizontalBackground.SetActive(false);
+        }
+        else
+        {
+            verticalBackground.SetActive(false);
+            horizontalBackground.SetActive(true);
+        }
 
         string[] levelLayout = levels[index];
         gridHeight = levelLayout.Length;
