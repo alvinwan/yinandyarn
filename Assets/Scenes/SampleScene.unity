@@ -1103,12 +1103,48 @@ MonoBehaviour:
   cellSpacing: 150
   rightPlayer: {fileID: 1160776970}
   positionPrefab: {fileID: 5827231886638554787, guid: 08701f8887cbe48afaa4e6b2e817ca65, type: 3}
+  gridParent: {fileID: 1030369984}
   levelBackgrounds:
   - {fileID: 712706827}
   - {fileID: 470176013}
   - {fileID: 1351632264}
   verticalBackground: {fileID: 1829534028}
   horizontalBackground: {fileID: 1197611746}
+--- !u!1 &1030369983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1030369984}
+  m_Layer: 5
+  m_Name: Foreground
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1030369984
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030369983}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1614382669}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1160776970
 GameObject:
   m_ObjectHideFlags: 0
@@ -1809,6 +1845,7 @@ RectTransform:
   m_Children:
   - {fileID: 1317486133}
   - {fileID: 223313483}
+  - {fileID: 1030369984}
   - {fileID: 1732774766}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -19,19 +19,27 @@ public class PlayerController : MonoBehaviour
         },
         new string[]
         {
+            ".....",
             "..1..",
             "..0..",
             "..0..",
-            "..0..",
-            "..0..",
-            "..2.."
+            "..2..",
+            "....."
         },
         new string[]
         {
+            "......",
             "..00..",
+            "001020",
+            "..00..",
+            "......"
+        },
+        new string[]
+        {
+            "......",
+            "...0..",
             ".0002.",
             ".0100.",
-            ".0000.",
             "......"
         }
     };
@@ -60,7 +68,7 @@ public class PlayerController : MonoBehaviour
     private List<GameObject> positionIndicators = new List<GameObject>();
 
     // Parent for the grid (assumed to be the same parent as the players)
-    private RectTransform gridParent;
+    public RectTransform gridParent;
 
     // Occupancy grid: true indicates a cell is part of the level.
     private bool[,] occupancyGrid;
@@ -77,8 +85,6 @@ public class PlayerController : MonoBehaviour
         {
             rightPlayerRect = rightPlayer.GetComponent<RectTransform>();
         }
-        
-        gridParent = leftPlayerRect.parent.GetComponent<RectTransform>();
         LoadLevel(currentLevelIndex);
     }
 
@@ -98,7 +104,7 @@ public class PlayerController : MonoBehaviour
         {
             // If the left player is at the rightmost cell of its half and the right player
             // is at the leftmost cell of its half, and we press right, advance to the next level.
-            if (leftPlayerPos.x == gridHalfWidth - 1 && rightPlayerPos.x == gridHalfWidth && currentLevelIndex != 1)
+            if (leftPlayerPos.x == gridHalfWidth - 1 && rightPlayerPos.x == gridHalfWidth && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
             {
                 AdvanceLevel();
             }
@@ -120,7 +126,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (leftPlayerPos.y == gridHalfHeight && rightPlayerPos.y == gridHalfHeight - 1 && currentLevelIndex == 1)
+            if (leftPlayerPos.y == gridHalfHeight && rightPlayerPos.y == gridHalfHeight - 1 && rightPlayerPos.x == leftPlayerPos.x && currentLevelIndex == 1)
             {
                 AdvanceLevel();
             }
