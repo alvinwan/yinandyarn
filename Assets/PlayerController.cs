@@ -11,45 +11,37 @@ public class PlayerController : MonoBehaviour
     {
         new string[]
         {
-            "......",
-            "......",
-            "100002",
-            "......",
-            "......"
+            "100002", // 3
         },
         new string[]
         {
-            ".....",
-            "..1..",
-            "..0..",
-            "..0..",
-            "..2..",
-            "....."
+            "1",
+            "0",
+            "0",
+            "2", // 2
         },
         new string[]
         {
-            "......",
-            "......",
-            ".10002",
-            "......",
-            "......"
+            "1000002.", // 2
         },
         new string[]
         {
-            "......",
+            "..0.",
+            "0020",
+            "1000", // 4
+        },
+        new string[]
+        {
+            "...002",
+            ".00000",
+            ".10000", // 3
+        },
+        new string[]
+        {
             "..00..",
-            "001020",
+            "001020", // 4
             "..00..",
-            "......"
         },
-        new string[]
-        {
-            "......",
-            "...0..",
-            "000020",
-            "001000",
-            "......"
-        }
     };
 
     private int currentLevelIndex = 0;
@@ -73,6 +65,7 @@ public class PlayerController : MonoBehaviour
 
     // Prefab for a visual indicator of a valid grid cell.
     public GameObject positionPrefab;
+    public GameObject deathPrefab;
     private List<GameObject> positionIndicators = new List<GameObject>();
 
     // Parent for the grid (assumed to be the same parent as the players)
@@ -267,6 +260,15 @@ public class PlayerController : MonoBehaviour
                 else if (cell == '2')
                 {
                     rightPlayerPos = gridPos;
+                }
+                else if (cell == 'X')
+                {
+                    if (deathPrefab != null) {
+                        GameObject deathIndicator = Instantiate(deathPrefab, gridParent);
+                        RectTransform deathRect = deathIndicator.GetComponent<RectTransform>();
+                        deathRect.anchoredPosition = GetAnchoredPosition(gridPos);
+                        positionIndicators.Add(deathIndicator);
+                    }
                 }
                 // '0' means valid cell with no special start.
             }
