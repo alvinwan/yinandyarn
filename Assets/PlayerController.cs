@@ -70,6 +70,8 @@ public class PlayerController : MonoBehaviour
     private RectTransform leftPlayerRect;
     public GameObject rightPlayer;
     private RectTransform rightPlayerRect;
+    private List<List<int>> leftPlayerBounds;
+    private List<List<int>> rightPlayerBounds;
 
     // Prefab for a visual indicator of a valid grid cell.
     public GameObject positionPrefab;
@@ -103,9 +105,9 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             // Left player moves left.
-            leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, -1, 0, gridHalfWidth - 1);
+            leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, -1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
             // Right player moves right (mirrored).
-            rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, 1, gridHalfWidth, gridWidth - 1);
+            rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, 1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
             UpdatePlayerPositions();
         }
         else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
@@ -119,17 +121,17 @@ public class PlayerController : MonoBehaviour
             else
             {
                 // Otherwise, perform the normal rightward movement.
-                leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, 1, 0, gridHalfWidth - 1);
-                rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, -1, gridHalfWidth, gridWidth - 1);
+                leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, 1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
+                rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, -1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
                 UpdatePlayerPositions();
             }
         }
         // Vertical movement for both players: full vertical range [0, gridHeight - 1]
         else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            leftPlayerPos = FindNextValidVertical(leftPlayerPos, 1);
+            leftPlayerPos = FindNextValidVertical(leftPlayerPos, 1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
             // Note: right player moves in the opposite vertical direction.
-            rightPlayerPos = FindNextValidVertical(rightPlayerPos, -1);
+            rightPlayerPos = FindNextValidVertical(rightPlayerPos, -1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
             UpdatePlayerPositions();
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
@@ -138,8 +140,8 @@ public class PlayerController : MonoBehaviour
             {
                 AdvanceLevel();
             } else {
-                leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1);
-                rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1);
+                leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
+                rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
                 UpdatePlayerPositions();
             }
         }
@@ -207,12 +209,27 @@ public class PlayerController : MonoBehaviour
         if (currentLevelIndex == 1)
         {
             Debug.Assert(gridHeight % 2 == 0, "Grid height must be even for vertical levels.");
-            gridHalfHeight = gridHeight / 2;
+            int gridHalfHeight = gridHeight / 2;
+            leftPlayerBounds = new List<List<int>>(){
+                new List<int>(){0, gridWidth},
+                new List<int>(){gridHalfHeight, gridHeight - 1}
+            };
+            rightPlayerBounds = new List<List<int>>(){
+                new List<int>(){0, gridWidth - 1},
+                new List<int>(){0, gridHalfHeight - 1}
+            };
         } else {
             Debug.Assert(gridWidth % 2 == 0, "Grid width must be even for horizontal levels.");
-            gridHalfWidth = gridWidth / 2;
+            int gridHalfWidth = gridWidth / 2;
+            leftPlayerBounds = new List<List<int>>(){
+                new List<int>(){0, gridHalfWidth - 1},
+                new List<int>(){0, gridHeight - 1}
+            };
+            rightPlayerBounds = new List<List<int>>(){
+                new List<int>(){gridHalfWidth, gridWidth - 1},
+                new List<int>(){0, gridHeight - 1}
+            };
         }
-
 
         occupancyGrid = new bool[gridWidth, gridHeight];
 
@@ -301,17 +318,17 @@ public class PlayerController : MonoBehaviour
 
     // Helper method: searches vertically for the next valid cell.
     // 'direction' should be +1 (up) or -1 (down).
-    Vector2Int FindNextValidVertical(Vector2Int start, int direction)
+    Vector2Int FindNextValidVertical(Vector2Int start, int direction, int minY, int maxY)
     {
         Vector2Int candidate = start;
         // Loop at most the gridHeight times.
-        for (int i = 0; i < gridHeight; i++)
+        for (int i = 0; i < (maxY - minY + 1); i++)
         {
             candidate.y += direction;
-            if (candidate.y < 0)
-                candidate.y = gridHeight - 1;
-            else if (candidate.y >= gridHeight)
-                candidate.y = 0;
+            if (candidate.y < minY)
+                candidate.y = maxY;
+            else if (candidate.y > maxY)
+                candidate.y = minY;
             if (occupancyGrid[candidate.x, candidate.y])
                 return candidate;
         }
