@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
         {
             "......",
             "......",
-            ".01020",
+            ".10002",
             "......",
             "......"
         },
@@ -55,8 +55,6 @@ public class PlayerController : MonoBehaviour
     private int currentLevelIndex = 0;
     private int gridWidth;
     private int gridHeight;
-    private int gridHalfWidth;
-    private int gridHalfHeight;
 
     // Spacing between cells (e.g., in pixels)
     public float cellSpacing = 150f;
@@ -114,7 +112,7 @@ public class PlayerController : MonoBehaviour
         {
             // If the left player is at the rightmost cell of its half and the right player
             // is at the leftmost cell of its half, and we press right, advance to the next level.
-            if (leftPlayerPos.x == gridHalfWidth - 1 && rightPlayerPos.x == gridHalfWidth && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
+            if (leftPlayerPos.x + 1 == rightPlayerPos.x && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
             {
                 AdvanceLevel();
             }
@@ -136,7 +134,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (leftPlayerPos.y == gridHalfHeight && rightPlayerPos.y == gridHalfHeight - 1 && rightPlayerPos.x == leftPlayerPos.x && currentLevelIndex == 1)
+            if (leftPlayerPos.y == rightPlayerPos.y + 1 && rightPlayerPos.x == leftPlayerPos.x && currentLevelIndex == 1)
             {
                 AdvanceLevel();
             } else {
