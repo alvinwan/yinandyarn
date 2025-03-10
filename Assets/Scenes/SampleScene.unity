@@ -1399,6 +1399,66 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &633930729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 633930731}
+  - component: {fileID: 633930730}
+  m_Layer: 5
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &633930730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633930729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6d53573f35b24fc582502677dfd1661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellSpacing: 150
+  leftPlayer: {fileID: 957250970}
+  rightPlayer: {fileID: 1160776970}
+  duplicateLeftPlayerRect: {fileID: 99205636}
+  duplicateRightPlayerRect: {fileID: 1589898335}
+  positionPrefab: {fileID: 5827231886638554787, guid: 08701f8887cbe48afaa4e6b2e817ca65, type: 3}
+  deathPrefab: {fileID: 5827231886638554787, guid: 28175c875062b455f9ab855a6bfa15b5, type: 3}
+  gridParent: {fileID: 1030369984}
+  levelBackgrounds:
+  - {fileID: 712706827}
+  - {fileID: 470176013}
+  - {fileID: 1351632264}
+  verticalBackground: {fileID: 1829534028}
+  horizontalBackground: {fileID: 1197611746}
+  bounceSound: {fileID: 86517797}
+  victorySound: {fileID: 112124957}
+--- !u!4 &633930731
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633930729}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -400, y: 0, z: 0}
+  m_LocalScale: {x: 0.005076142, y: 0.005076142, z: 0.005076142}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &712706827
 GameObject:
   m_ObjectHideFlags: 0
@@ -1583,7 +1643,6 @@ GameObject:
   - component: {fileID: 957250971}
   - component: {fileID: 957250974}
   - component: {fileID: 957250973}
-  - component: {fileID: 957250975}
   - component: {fileID: 957250976}
   m_Layer: 5
   m_Name: Player
@@ -1649,33 +1708,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 957250970}
   m_CullTransparentMesh: 1
---- !u!114 &957250975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 957250970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6d53573f35b24fc582502677dfd1661, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cellSpacing: 150
-  rightPlayer: {fileID: 1160776970}
-  duplicateLeftPlayerRect: {fileID: 99205636}
-  duplicateRightPlayerRect: {fileID: 1589898335}
-  positionPrefab: {fileID: 5827231886638554787, guid: 08701f8887cbe48afaa4e6b2e817ca65, type: 3}
-  deathPrefab: {fileID: 5827231886638554787, guid: 28175c875062b455f9ab855a6bfa15b5, type: 3}
-  gridParent: {fileID: 1030369984}
-  levelBackgrounds:
-  - {fileID: 712706827}
-  - {fileID: 470176013}
-  - {fileID: 1351632264}
-  verticalBackground: {fileID: 1829534028}
-  horizontalBackground: {fileID: 1197611746}
-  bounceSound: {fileID: 86517797}
-  victorySound: {fileID: 112124957}
 --- !u!95 &957250976
 Animator:
   serializedVersion: 7
@@ -3024,3 +3056,4 @@ SceneRoots:
   - {fileID: 1614382669}
   - {fileID: 1231796100}
   - {fileID: 2042597011}
+  - {fileID: 633930731}

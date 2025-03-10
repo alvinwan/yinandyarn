@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour
     // Assume the left player's RectTransform is on the same GameObject as this script.
     private RectTransform leftPlayerRect;
     private RectTransform leftMaskRect;
+    public GameObject leftPlayer;
     public GameObject rightPlayer;
     private RectTransform rightPlayerRect;
     private RectTransform rightMaskRect;
@@ -104,9 +105,9 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         Debug.Assert(rightPlayer != null, "Right player is not set.");
-        leftPlayerRect = GetComponent<RectTransform>();
+        leftPlayerRect = leftPlayer.GetComponent<RectTransform>();
         rightPlayerRect = rightPlayer.GetComponent<RectTransform>();
-        leftMaskRect = transform.parent.gameObject.GetComponent<RectTransform>();
+        leftMaskRect = leftPlayer.transform.parent.gameObject.GetComponent<RectTransform>();
         rightMaskRect = rightPlayer.transform.parent.gameObject.GetComponent<RectTransform>();
         
         LoadLevel(currentLevelIndex);
@@ -114,7 +115,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        animatorLeft = GetComponent<Animator>();
+        animatorLeft = leftPlayer.GetComponent<Animator>();
         animatorRight = rightPlayer.GetComponent<Animator>();
         FlipAnimation(true, rightPlayerRect);
     }
@@ -124,7 +125,7 @@ public class PlayerController : MonoBehaviour
         // Optional: press L to switch to the next level manually.
         if (Input.GetKeyDown(KeyCode.L))
         {
-            AdvanceLevel();
+            AnimateAdvanceLevel();
         }
 
         if (isMoving)
@@ -144,19 +145,17 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            // If the left player is at the rightmost cell of its half and the right player
-            // is at the leftmost cell of its half, and we press right, advance to the next level.
-            if (leftPlayerPos.x + 1 == rightPlayerPos.x && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
-            {
-                AdvanceLevel();
-            }
-            else
-            {
-                // Otherwise, perform the normal rightward movement.
-                leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, 1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
-                rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, -1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
-                AnimatePlayerPositions(Direction.Right);
-            }
+            // If the left player is at the leftmost cell of its half and the right player
+            // is at the rightmost cell of its half, and we press right, advance to the next level.
+            bool isWin = leftPlayerPos.x + 1 == rightPlayerPos.x && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1;
+
+            // Otherwise, perform the normal rightward movement.
+            leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, 1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
+            rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, -1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
+            AnimatePlayerPositions(Direction.Right, isWin);
+
+            if (isWin)
+                StartCoroutine(AnimateAdvanceLevel());
         }
         // Vertical movement for both players: full vertical range [0, gridHeight - 1]
         else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -168,23 +167,32 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (leftPlayerPos.y == rightPlayerPos.y + 1 && rightPlayerPos.x == leftPlayerPos.x && currentLevelIndex == 1)
-            {
-                AdvanceLevel();
-            } else {
-                leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
-                rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
-                AnimatePlayerPositions(Direction.Left);
-            }
+            bool isWin = leftPlayerPos.y == rightPlayerPos.y + 1 && rightPlayerPos.x == leftPlayerPos.x && currentLevelIndex == 1;
+
+            leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
+            rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
+            AnimatePlayerPositions(Direction.Left, isWin);
+
+            if (isWin)
+                StartCoroutine(AnimateAdvanceLevel());
         }
     }
 
     /// <summary>
     /// Advances to the next level.
     /// </summary>
+    IEnumerator AnimateAdvanceLevel()
+    {
+        yield return new WaitForSeconds(0.12f);
+        victorySound.Play();
+        rightPlayer.SetActive(false);
+        leftPlayer.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        AdvanceLevel();
+    }
+
     void AdvanceLevel()
     {
-        victorySound.Play();
         currentLevelIndex = (currentLevelIndex + 1) % levels.Count;
         LoadLevel(currentLevelIndex);
     }
@@ -327,9 +335,11 @@ public class PlayerController : MonoBehaviour
     {
         leftMaskRect.anchoredPosition = GetAnchoredPosition(leftPlayerPos);
         rightMaskRect.anchoredPosition = GetAnchoredPosition(rightPlayerPos);
+        leftPlayer.SetActive(true);
+        rightPlayer.SetActive(true);
     }
 
-    void AnimatePlayerPositions(Direction direction)
+    void AnimatePlayerPositions(Direction direction, bool isOneSided = false)
     {
         bounceSound.Play();
         FlipAnimation(direction == Direction.Right, leftPlayerRect);
@@ -345,7 +355,7 @@ public class PlayerController : MonoBehaviour
             // The duplicate is only visible during the jump animation.
             StartCoroutine(MovePlayerWithDuplicate(
                 leftPlayerRect,
-                duplicateLeftPlayerRect,
+                isOneSided ? null : duplicateLeftPlayerRect,
                 new Vector2(-cellSpacing, 0),
                 new Vector2(cellSpacing, 0),
                 GetAnchoredPosition(leftPlayerPos),
@@ -354,7 +364,7 @@ public class PlayerController : MonoBehaviour
             ));
             StartCoroutine(MovePlayerWithDuplicate(
                 rightPlayerRect,
-                duplicateRightPlayerRect,
+                isOneSided ? null : duplicateRightPlayerRect,
                 new Vector2(cellSpacing, 0),
                 new Vector2(-cellSpacing, 0),
                 GetAnchoredPosition(rightPlayerPos),
@@ -366,7 +376,7 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(MovePlayerWithDuplicate(
                 leftPlayerRect,
-                duplicateLeftPlayerRect,
+                isOneSided ? null : duplicateLeftPlayerRect,
                 new Vector2(cellSpacing, 0),
                 new Vector2(-cellSpacing, 0),
                 GetAnchoredPosition(leftPlayerPos),
@@ -375,7 +385,7 @@ public class PlayerController : MonoBehaviour
             ));
             StartCoroutine(MovePlayerWithDuplicate(
                 rightPlayerRect,
-                duplicateRightPlayerRect,
+                isOneSided ? null : duplicateRightPlayerRect,
                 new Vector2(-cellSpacing, 0),
                 new Vector2(cellSpacing, 0),
                 GetAnchoredPosition(rightPlayerPos),
@@ -419,9 +429,12 @@ public class PlayerController : MonoBehaviour
         isMoving = true;
 
         // Ensure the duplicate is visible.
-        duplicateRect.gameObject.SetActive(true);
-        duplicateRect.GetComponent<Animator>().SetTrigger("jump");
-        duplicateRect.GetComponent<RectTransform>().parent.gameObject.GetComponent<RectTransform>().anchoredPosition = duplicateOutPos;
+        if (duplicateRect != null)
+        {
+            duplicateRect.gameObject.SetActive(true);
+            duplicateRect.GetComponent<Animator>().SetTrigger("jump");
+            duplicateRect.GetComponent<RectTransform>().parent.gameObject.GetComponent<RectTransform>().anchoredPosition = duplicateOutPos;
+        }
 
         Vector2 mainStart = mainRect.anchoredPosition;
         Vector2 mainTarget = mainStart + deltaToTarget;
@@ -435,7 +448,8 @@ public class PlayerController : MonoBehaviour
             // Lerp the main cat to its offscreen target.
             mainRect.anchoredPosition = Vector2.Lerp(mainStart, mainTarget, t);
             // Lerp the duplicate from its offscreen start to its final onscreen position.
-            duplicateRect.anchoredPosition = Vector2.Lerp(duplicateStart, duplicateTarget, t);
+            if (duplicateRect != null)
+                duplicateRect.anchoredPosition = Vector2.Lerp(duplicateStart, duplicateTarget, t);
             yield return new WaitForSeconds(stepDuration);
         }
 
@@ -444,7 +458,10 @@ public class PlayerController : MonoBehaviour
         mainRect.anchoredPosition = duplicateTarget;
 
         // Optionally, disable the duplicate after the transition.
-        duplicateRect.gameObject.SetActive(false);
+        if (duplicateRect != null)
+        {
+            duplicateRect.gameObject.SetActive(false);
+        }
 
         isMoving = false;
     }
