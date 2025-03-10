@@ -106,6 +106,9 @@ public class PlayerController : MonoBehaviour
     public Animator animatorHeartDark;
     public Animator animatorHeartLight;
 
+    // In-Game UI
+    public TextMeshProUGUI levelMoveCounter;
+
     // Win screen
     public GameObject winScreen;
     private int moveCounter = 0;
@@ -191,6 +194,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void SetMoveCounter(int moves)
+    {
+        moveCounter = moves;
+        levelMoveCounter.text = moveCounter.ToString();
+    }
+
     /// <summary>
     /// Advances to the next level.
     /// </summary>
@@ -208,7 +217,7 @@ public class PlayerController : MonoBehaviour
 
     void AdvanceLevel()
     {
-        moveCounter = 0;
+        SetMoveCounter(0);
         currentLevelIndex = (currentLevelIndex + 1) % levels.Count;
         LoadLevel(currentLevelIndex);
     }
@@ -369,7 +378,7 @@ public class PlayerController : MonoBehaviour
 
     void AnimatePlayerPositions(Direction direction, bool isOneSided = false)
     {
-        moveCounter += 1;
+        SetMoveCounter(++moveCounter);
         bounceSound.Play();
         
         FlipAnimation(direction == Direction.Right, leftPlayerRect);
