@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
         {
             // If the left player is at the rightmost cell of its half and the right player
             // is at the leftmost cell of its half, and we press right, advance to the next level.
-            if (leftPlayerPos.x + 1 == rightPlayerPos.x && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
+            if (false && leftPlayerPos.x + 1 == rightPlayerPos.x && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
             {
                 AdvanceLevel();
             }
@@ -362,6 +362,27 @@ public class PlayerController : MonoBehaviour
                 5
             ));
         }
+        else if (direction == Direction.Right && newLeftPos.x < leftMaskRect.anchoredPosition.x)
+        {
+            StartCoroutine(MovePlayerWithDuplicate(
+                leftPlayerRect,
+                duplicateLeftPlayerRect,
+                new Vector2(cellSpacing, 0),
+                new Vector2(-cellSpacing, 0),
+                GetAnchoredPosition(leftPlayerPos),
+                0.25f,
+                5
+            ));
+            StartCoroutine(MovePlayerWithDuplicate(
+                rightPlayerRect,
+                duplicateRightPlayerRect,
+                new Vector2(-cellSpacing, 0),
+                new Vector2(cellSpacing, 0),
+                GetAnchoredPosition(rightPlayerPos),
+                0.25f,
+                5
+            ));
+        }
         else
         {
             StartCoroutine(MovePlayers(newLeftPos, leftMaskRect, 0.25f, 5));
@@ -395,6 +416,8 @@ public class PlayerController : MonoBehaviour
         float duration, 
         int steps = 10)
     {
+        isMoving = true;
+
         // Ensure the duplicate is visible.
         duplicateRect.gameObject.SetActive(true);
         duplicateRect.GetComponent<Animator>().SetTrigger("jump");
@@ -422,6 +445,8 @@ public class PlayerController : MonoBehaviour
 
         // Optionally, disable the duplicate after the transition.
         duplicateRect.gameObject.SetActive(false);
+
+        isMoving = false;
     }
 
     // Assuming leftPlayerRect is your player's RectTransform.
