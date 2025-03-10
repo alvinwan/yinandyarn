@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -79,14 +80,21 @@ public class PlayerController : MonoBehaviour
     public GameObject verticalBackground;
     public GameObject horizontalBackground;
 
+    private Animator animator;
+    private bool isMoving = false;
+
     void Awake()
     {
+        Debug.Assert(rightPlayer != null, "Right player is not set.");
         leftPlayerRect = GetComponent<RectTransform>();
-        if (rightPlayer != null)
-        {
-            rightPlayerRect = rightPlayer.GetComponent<RectTransform>();
-        }
+        rightPlayerRect = rightPlayer.GetComponent<RectTransform>();
+        
         LoadLevel(currentLevelIndex);
+    }
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -99,7 +107,7 @@ public class PlayerController : MonoBehaviour
             leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, -1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
             // Right player moves right (mirrored).
             rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, 1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
-            UpdatePlayerPositions();
+            AnimatePlayerPositions();
         }
         else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -114,7 +122,7 @@ public class PlayerController : MonoBehaviour
                 // Otherwise, perform the normal rightward movement.
                 leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, 1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
                 rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, -1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
-                UpdatePlayerPositions();
+                AnimatePlayerPositions();
             }
         }
         // Vertical movement for both players: full vertical range [0, gridHeight - 1]
@@ -123,7 +131,7 @@ public class PlayerController : MonoBehaviour
             leftPlayerPos = FindNextValidVertical(leftPlayerPos, 1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
             // Note: right player moves in the opposite vertical direction.
             rightPlayerPos = FindNextValidVertical(rightPlayerPos, -1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
-            UpdatePlayerPositions();
+            AnimatePlayerPositions();
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -133,7 +141,7 @@ public class PlayerController : MonoBehaviour
             } else {
                 leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
                 rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
-                UpdatePlayerPositions();
+                AnimatePlayerPositions();
             }
         }
 
@@ -290,10 +298,46 @@ public class PlayerController : MonoBehaviour
     void UpdatePlayerPositions()
     {
         leftPlayerRect.anchoredPosition = GetAnchoredPosition(leftPlayerPos);
+        rightPlayerRect.anchoredPosition = GetAnchoredPosition(rightPlayerPos);
+    }
+
+    void AnimatePlayerPositions()
+    {
+        if (isMoving)
+        {
+            return;
+        }
+
+        animator.SetTrigger("jump");
+        Vector2 newLeftPos = GetAnchoredPosition(leftPlayerPos);
+        Vector2 newRightPos = GetAnchoredPosition(rightPlayerPos);
+        StartCoroutine(MovePlayers(newLeftPos, newRightPos, 0.25f, 6));
+    }
+
+    IEnumerator MovePlayers(Vector2 leftTarget, Vector2 rightTarget, float duration, int steps = 10)
+    {
+        isMoving = true;
+        Vector2 startLeftPos = leftPlayerRect.anchoredPosition;
+        Vector2 startRightPos = rightPlayerRect != null ? rightPlayerRect.anchoredPosition : Vector2.zero;
+        float stepDuration = duration / steps;
+
+        for (int i = 1; i <= steps; i++)
+        {
+            float t = (float)i / steps; // Discrete step progress
+            leftPlayerRect.anchoredPosition = Vector2.Lerp(startLeftPos, leftTarget, t);
+            if (rightPlayerRect != null)
+            {
+                rightPlayerRect.anchoredPosition = Vector2.Lerp(startRightPos, rightTarget, t);
+            }
+            yield return new WaitForSeconds(stepDuration);
+        }
+        // Ensure final positions are exact.
+        leftPlayerRect.anchoredPosition = leftTarget;
         if (rightPlayerRect != null)
         {
-            rightPlayerRect.anchoredPosition = GetAnchoredPosition(rightPlayerPos);
+            rightPlayerRect.anchoredPosition = rightTarget;
         }
+        isMoving = false;
     }
 
     // Helper method: searches horizontally (within a given x-range) for the next valid cell.
