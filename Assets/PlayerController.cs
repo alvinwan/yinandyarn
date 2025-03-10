@@ -102,6 +102,9 @@ public class PlayerController : MonoBehaviour
     public AudioSource bounceSound;
     public AudioSource victorySound;
 
+    public Animator animatorHeartDark;
+    public Animator animatorHeartLight;
+
     void Awake()
     {
         Debug.Assert(rightPlayer != null, "Right player is not set.");
@@ -185,9 +188,11 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.12f);
         victorySound.Play();
+        animatorHeartDark.SetTrigger("play");
+        animatorHeartLight.SetTrigger("play");
         rightPlayer.SetActive(false);
         leftPlayer.SetActive(false);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.0f);
         AdvanceLevel();
     }
 
