@@ -67,10 +67,10 @@ public class PlayerController : MonoBehaviour
     // References to the players' RectTransforms.
     // Assume the left player's RectTransform is on the same GameObject as this script.
     private RectTransform leftPlayerRect;
-    private RectTransform leftPlayerMaskRect;
+    private RectTransform leftMaskRect;
     public GameObject rightPlayer;
     private RectTransform rightPlayerRect;
-    private RectTransform rightPlayerMaskRect;
+    private RectTransform rightMaskRect;
     private List<List<int>> leftPlayerBounds;
     private List<List<int>> rightPlayerBounds;
 
@@ -102,8 +102,8 @@ public class PlayerController : MonoBehaviour
         Debug.Assert(rightPlayer != null, "Right player is not set.");
         leftPlayerRect = GetComponent<RectTransform>();
         rightPlayerRect = rightPlayer.GetComponent<RectTransform>();
-        leftPlayerMaskRect = transform.parent.gameObject.GetComponent<RectTransform>();
-        rightPlayerMaskRect = rightPlayer.transform.parent.gameObject.GetComponent<RectTransform>();
+        leftMaskRect = transform.parent.gameObject.GetComponent<RectTransform>();
+        rightMaskRect = rightPlayer.transform.parent.gameObject.GetComponent<RectTransform>();
         
         LoadLevel(currentLevelIndex);
     }
@@ -321,8 +321,8 @@ public class PlayerController : MonoBehaviour
     // Updates the players' positions on the canvas.
     void UpdatePlayerPositions()
     {
-        leftPlayerMaskRect.anchoredPosition = GetAnchoredPosition(leftPlayerPos);
-        rightPlayerMaskRect.anchoredPosition = GetAnchoredPosition(rightPlayerPos);
+        leftMaskRect.anchoredPosition = GetAnchoredPosition(leftPlayerPos);
+        rightMaskRect.anchoredPosition = GetAnchoredPosition(rightPlayerPos);
     }
 
     void AnimatePlayerPositions(Direction direction)
@@ -332,28 +332,37 @@ public class PlayerController : MonoBehaviour
         animatorLeft.SetTrigger("jump");
         FlipAnimation(direction == Direction.Left, rightPlayerRect);
         animatorRight.SetTrigger("jump");
+
+        // if (direction == Direction.Left && leftPlayerPos.x > leftMaskRect.anchoredPosition.x)
+        // {
+        //     Vector2 newLeftPos = new Vector2(-cellSpacing, 0);
+        //     Vector2 newRightPos = new Vector2(cellSpacing, 0);
+        //     StartCoroutine(MovePlayers(newLeftPos, newRightPos, leftPlayerRect, rightPlayerRect, 0.25f, 6));
+        // }
+        // else
+        // {
         Vector2 newLeftPos = GetAnchoredPosition(leftPlayerPos);
         Vector2 newRightPos = GetAnchoredPosition(rightPlayerPos);
-        StartCoroutine(MovePlayers(newLeftPos, newRightPos, 0.25f, 6));
+        StartCoroutine(MovePlayers(newLeftPos, newRightPos, leftMaskRect, rightMaskRect, 0.25f, 6));
     }
 
-    IEnumerator MovePlayers(Vector2 leftTarget, Vector2 rightTarget, float duration, int steps = 10)
+    IEnumerator MovePlayers(Vector2 leftTarget, Vector2 rightTarget, RectTransform leftRect, RectTransform rightRect, float duration, int steps = 10)
     {
         isMoving = true;
-        Vector2 startLeftPos = leftPlayerMaskRect.anchoredPosition;
-        Vector2 startRightPos = rightPlayerMaskRect != null ? rightPlayerMaskRect.anchoredPosition : Vector2.zero;
+        Vector2 startLeftPos = leftRect.anchoredPosition;
+        Vector2 startRightPos = rightRect != null ? rightRect.anchoredPosition : Vector2.zero;
         float stepDuration = duration / steps;
 
         for (int i = 1; i <= steps; i++)
         {
             float t = (float)i / steps; // Discrete step progress
-            leftPlayerMaskRect.anchoredPosition = Vector2.Lerp(startLeftPos, leftTarget, t);
-            rightPlayerMaskRect.anchoredPosition = Vector2.Lerp(startRightPos, rightTarget, t);
+            leftRect.anchoredPosition = Vector2.Lerp(startLeftPos, leftTarget, t);
+            rightRect.anchoredPosition = Vector2.Lerp(startRightPos, rightTarget, t);
             yield return new WaitForSeconds(stepDuration);
         }
         // Ensure final positions are exact.
-        leftPlayerMaskRect.anchoredPosition = leftTarget;
-        rightPlayerMaskRect.anchoredPosition = rightTarget;
+        leftRect.anchoredPosition = leftTarget;
+        rightRect.anchoredPosition = rightTarget;
         isMoving = false;
     }
 
