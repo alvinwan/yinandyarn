@@ -105,6 +105,9 @@ public class PlayerController : MonoBehaviour
     public Animator animatorHeartDark;
     public Animator animatorHeartLight;
 
+    // Win screen
+    public GameObject winScreen;
+
     void Awake()
     {
         Debug.Assert(rightPlayer != null, "Right player is not set.");
@@ -193,13 +196,24 @@ public class PlayerController : MonoBehaviour
         rightPlayer.SetActive(false);
         leftPlayer.SetActive(false);
         yield return new WaitForSeconds(1.0f);
-        AdvanceLevel();
+        AnimateVictoryScreen();
     }
 
     void AdvanceLevel()
     {
         currentLevelIndex = (currentLevelIndex + 1) % levels.Count;
         LoadLevel(currentLevelIndex);
+    }
+
+    void AnimateVictoryScreen()
+    {
+        winScreen.SetActive(true);
+    }
+
+    public void OnNextClick()
+    {
+        winScreen.SetActive(false);
+        AdvanceLevel();
     }
 
     // Loads a level based on the current level layout.
