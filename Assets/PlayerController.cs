@@ -92,6 +92,9 @@ public class PlayerController : MonoBehaviour
     private Animator animatorRight;
     private bool isMoving = false;
 
+    public AudioSource bounceSound;
+    public AudioSource victorySound;
+
     void Awake()
     {
         Debug.Assert(rightPlayer != null, "Right player is not set.");
@@ -173,6 +176,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void AdvanceLevel()
     {
+        victorySound.Play();
         currentLevelIndex = (currentLevelIndex + 1) % levels.Count;
         LoadLevel(currentLevelIndex);
     }
@@ -319,6 +323,7 @@ public class PlayerController : MonoBehaviour
 
     void AnimatePlayerPositions(Direction direction)
     {
+        bounceSound.Play();
         FlipAnimation(direction == Direction.Right, leftPlayerRect);
         animatorLeft.SetTrigger("jump");
         FlipAnimation(direction == Direction.Left, rightPlayerRect);
