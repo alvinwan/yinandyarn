@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2153a761741ef4daa9b8a4c91c0c6738
+guid: 70a636987eebd4350bf5e7133cdd0daf
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7579880069968819508
-    second: Sitting-Angle_0
+      213: 1155544749211217421
+    second: sit4_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -53,7 +53,7 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sitting-Angle_0
+      name: sit4_0
       rect:
         serializedVersion: 2
-        x: 29
-        y: 11
-        width: 144
-        height: 172
+        x: 23
+        y: 12
+        width: 145
+        height: 175
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 435fd8283c4213960800000000000000
-      internalID: 7579880069968819508
+      spriteID: d0e6dcab3d1590010800000000000000
+      internalID: 1155544749211217421
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sitting-Angle_0: 7579880069968819508
+      sit4_0: 1155544749211217421
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

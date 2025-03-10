@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c08c1872ff4d14dc583b8443adb39d42
+guid: 7316cdfaa2e5747e180e03f00f95c300
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3308656359511428020
-    second: Sitting-Front_0
+      213: 1155544749211217421
+    second: sit4_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -53,7 +53,7 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -126,12 +126,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sitting-Front_0
+      name: sit4_0
       rect:
         serializedVersion: 2
-        x: 34
-        y: 11
-        width: 134
+        x: 24
+        y: 14
+        width: 142
         height: 171
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c44fb7f229a4512d0800000000000000
-      internalID: -3308656359511428020
+      spriteID: d0e6dcab3d1590010800000000000000
+      internalID: 1155544749211217421
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sitting-Front_0: -3308656359511428020
+      sit4_0: 1155544749211217421
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
