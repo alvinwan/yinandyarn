@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
         {
             // If the left player is at the rightmost cell of its half and the right player
             // is at the leftmost cell of its half, and we press right, advance to the next level.
-            if (false && leftPlayerPos.x + 1 == rightPlayerPos.x && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
+            if (leftPlayerPos.x + 1 == rightPlayerPos.x && leftPlayerPos.y == rightPlayerPos.y && currentLevelIndex != 1)
             {
                 AdvanceLevel();
             }
