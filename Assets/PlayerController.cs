@@ -163,7 +163,7 @@ public class PlayerController : MonoBehaviour
             leftPlayerPos = FindNextValidVertical(leftPlayerPos, 1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
             // Note: right player moves in the opposite vertical direction.
             rightPlayerPos = FindNextValidVertical(rightPlayerPos, -1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
-            AnimatePlayerPositions(Direction.Left);
+            AnimatePlayerPositions(Direction.Up);
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour
 
             leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
             rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
-            AnimatePlayerPositions(Direction.Left, isWin);
+            AnimatePlayerPositions(Direction.Down, isWin);
 
             if (isWin)
                 StartCoroutine(AnimateAdvanceLevel());
@@ -342,14 +342,18 @@ public class PlayerController : MonoBehaviour
     void AnimatePlayerPositions(Direction direction, bool isOneSided = false)
     {
         bounceSound.Play();
+        
         FlipAnimation(direction == Direction.Right, leftPlayerRect);
+        FlipAnimation(direction == Direction.Right, duplicateLeftPlayerRect);
         animatorLeft.SetTrigger("jump");
+
         FlipAnimation(direction == Direction.Left, rightPlayerRect);
+        FlipAnimation(direction == Direction.Left, duplicateRightPlayerRect);
         animatorRight.SetTrigger("jump");
 
         Vector2 newLeftPos = GetAnchoredPosition(leftPlayerPos);
         Vector2 newRightPos = GetAnchoredPosition(rightPlayerPos);
-        if (direction == Direction.Left && newLeftPos.x > leftMaskRect.anchoredPosition.x)
+        if (direction == Direction.Left && newLeftPos.x >= leftMaskRect.anchoredPosition.x)
         {   
             // Duplicate here refers to the duplicate of each side's cat that is used to animate the jump.
             // The duplicate is only visible during the jump animation.
@@ -363,7 +367,7 @@ public class PlayerController : MonoBehaviour
                 5
             ));
         }
-        else if (direction == Direction.Right && newLeftPos.x < leftMaskRect.anchoredPosition.x)
+        else if (direction == Direction.Right && newLeftPos.x <= leftMaskRect.anchoredPosition.x)
         {
             StartCoroutine(MovePlayerWithDuplicate(
                 leftPlayerRect,
@@ -380,7 +384,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(MovePlayers(newLeftPos, leftMaskRect, 0.25f, 5));
         }
 
-        if (direction == Direction.Left && newRightPos.x < rightMaskRect.anchoredPosition.x)
+        if (direction == Direction.Left && newRightPos.x <= rightMaskRect.anchoredPosition.x)
         {
             StartCoroutine(MovePlayerWithDuplicate(
                 rightPlayerRect,
@@ -391,7 +395,7 @@ public class PlayerController : MonoBehaviour
                 0.25f,
                 5
             ));
-        } else if (direction == Direction.Right && newRightPos.x > rightMaskRect.anchoredPosition.x)
+        } else if (direction == Direction.Right && newRightPos.x >= rightMaskRect.anchoredPosition.x)
         {
             StartCoroutine(MovePlayerWithDuplicate(
                 rightPlayerRect,
