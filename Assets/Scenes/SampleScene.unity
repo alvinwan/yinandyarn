@@ -1043,7 +1043,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &353958389
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1899,6 +1899,7 @@ MonoBehaviour:
   levelMoveCounter: {fileID: 1305800366}
   winScreen: {fileID: 353958388}
   moveCounterText: {fileID: 985652910}
+  levelNumberText: {fileID: 1959327561}
 --- !u!4 &633930731
 Transform:
   m_ObjectHideFlags: 0
