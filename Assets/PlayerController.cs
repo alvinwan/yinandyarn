@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 using System.Collections;
+using TMPro;
 
 public enum Direction
 {
@@ -107,6 +108,8 @@ public class PlayerController : MonoBehaviour
 
     // Win screen
     public GameObject winScreen;
+    private int moveCounter = 0;
+    public TextMeshProUGUI moveCounterText;
 
     void Awake()
     {
@@ -201,12 +204,14 @@ public class PlayerController : MonoBehaviour
 
     void AdvanceLevel()
     {
+        moveCounter = 0;
         currentLevelIndex = (currentLevelIndex + 1) % levels.Count;
         LoadLevel(currentLevelIndex);
     }
 
     void AnimateVictoryScreen()
     {
+        moveCounterText.text = "Moves: " + moveCounter;
         winScreen.SetActive(true);
     }
 
@@ -360,6 +365,7 @@ public class PlayerController : MonoBehaviour
 
     void AnimatePlayerPositions(Direction direction, bool isOneSided = false)
     {
+        moveCounter += 1;
         bounceSound.Play();
         
         FlipAnimation(direction == Direction.Right, leftPlayerRect);
