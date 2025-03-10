@@ -343,7 +343,7 @@ public class PlayerController : MonoBehaviour
         // {
         Vector2 newLeftPos = GetAnchoredPosition(leftPlayerPos);
         Vector2 newRightPos = GetAnchoredPosition(rightPlayerPos);
-        StartCoroutine(MovePlayers(newLeftPos, newRightPos, leftMaskRect, rightMaskRect, 0.25f, 6));
+        StartCoroutine(MovePlayers(newLeftPos, newRightPos, leftMaskRect, rightMaskRect, 0.25f, 5));
     }
 
     IEnumerator MovePlayers(Vector2 leftTarget, Vector2 rightTarget, RectTransform leftRect, RectTransform rightRect, float duration, int steps = 10)
@@ -353,7 +353,7 @@ public class PlayerController : MonoBehaviour
         Vector2 startRightPos = rightRect != null ? rightRect.anchoredPosition : Vector2.zero;
         float stepDuration = duration / steps;
 
-        for (int i = 1; i <= steps; i++)
+        for (int i = 0; i <= steps; i++)
         {
             float t = (float)i / steps; // Discrete step progress
             leftRect.anchoredPosition = Vector2.Lerp(startLeftPos, leftTarget, t);
