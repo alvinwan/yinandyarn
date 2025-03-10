@@ -74,6 +74,10 @@ public class PlayerController : MonoBehaviour
     private List<List<int>> leftPlayerBounds;
     private List<List<int>> rightPlayerBounds;
 
+    // Duplicate left player
+    public RectTransform duplicateLeftPlayerRect;
+    public RectTransform duplicateRightPlayerRect;
+
     // Prefab for a visual indicator of a valid grid cell.
     public GameObject positionPrefab;
     public GameObject deathPrefab;
@@ -333,37 +337,91 @@ public class PlayerController : MonoBehaviour
         FlipAnimation(direction == Direction.Left, rightPlayerRect);
         animatorRight.SetTrigger("jump");
 
-        // if (direction == Direction.Left && leftPlayerPos.x > leftMaskRect.anchoredPosition.x)
-        // {
-        //     Vector2 newLeftPos = new Vector2(-cellSpacing, 0);
-        //     Vector2 newRightPos = new Vector2(cellSpacing, 0);
-        //     StartCoroutine(MovePlayers(newLeftPos, newRightPos, leftPlayerRect, rightPlayerRect, 0.25f, 6));
-        // }
-        // else
-        // {
         Vector2 newLeftPos = GetAnchoredPosition(leftPlayerPos);
         Vector2 newRightPos = GetAnchoredPosition(rightPlayerPos);
-        StartCoroutine(MovePlayers(newLeftPos, newRightPos, leftMaskRect, rightMaskRect, 0.25f, 5));
+        if (direction == Direction.Left && newLeftPos.x > leftMaskRect.anchoredPosition.x)
+        {   
+            // Duplicate here refers to the duplicate of each side's cat that is used to animate the jump.
+            // The duplicate is only visible during the jump animation.
+            StartCoroutine(MovePlayerWithDuplicate(
+                leftPlayerRect,
+                duplicateLeftPlayerRect,
+                new Vector2(-cellSpacing, 0),
+                new Vector2(cellSpacing, 0),
+                GetAnchoredPosition(leftPlayerPos),
+                0.25f,
+                5
+            ));
+            StartCoroutine(MovePlayerWithDuplicate(
+                rightPlayerRect,
+                duplicateRightPlayerRect,
+                new Vector2(cellSpacing, 0),
+                new Vector2(-cellSpacing, 0),
+                GetAnchoredPosition(rightPlayerPos),
+                0.25f,
+                5
+            ));
+        }
+        else
+        {
+            StartCoroutine(MovePlayers(newLeftPos, leftMaskRect, 0.25f, 5));
+            StartCoroutine(MovePlayers(newRightPos, rightMaskRect, 0.25f, 5));
+        }
     }
 
-    IEnumerator MovePlayers(Vector2 leftTarget, Vector2 rightTarget, RectTransform leftRect, RectTransform rightRect, float duration, int steps = 10)
+    IEnumerator MovePlayers(Vector2 target, RectTransform rect, float duration, int steps = 10)
     {
         isMoving = true;
-        Vector2 startLeftPos = leftRect.anchoredPosition;
-        Vector2 startRightPos = rightRect != null ? rightRect.anchoredPosition : Vector2.zero;
+        Vector2 targetPos = rect.anchoredPosition;
         float stepDuration = duration / steps;
 
         for (int i = 0; i <= steps; i++)
         {
             float t = (float)i / steps; // Discrete step progress
-            leftRect.anchoredPosition = Vector2.Lerp(startLeftPos, leftTarget, t);
-            rightRect.anchoredPosition = Vector2.Lerp(startRightPos, rightTarget, t);
+            rect.anchoredPosition = Vector2.Lerp(targetPos, target, t);
             yield return new WaitForSeconds(stepDuration);
         }
         // Ensure final positions are exact.
-        leftRect.anchoredPosition = leftTarget;
-        rightRect.anchoredPosition = rightTarget;
+        rect.anchoredPosition = target;
         isMoving = false;
+    }
+
+    IEnumerator MovePlayerWithDuplicate(
+        RectTransform mainRect,
+        RectTransform duplicateRect,
+        Vector2 deltaToTarget,       // Delta for both cats to move by INSIDE of their clipping masks
+        Vector2 duplicateInStart,    // Position that the duplicate starts from INSIDE of the clipping mask
+        Vector2 duplicateOutPos,   // The final onscreen position for the clipping mask itself
+        float duration, 
+        int steps = 10)
+    {
+        // Ensure the duplicate is visible.
+        duplicateRect.gameObject.SetActive(true);
+        duplicateRect.GetComponent<Animator>().SetTrigger("jump");
+        duplicateRect.GetComponent<RectTransform>().parent.gameObject.GetComponent<RectTransform>().anchoredPosition = duplicateOutPos;
+
+        Vector2 mainStart = mainRect.anchoredPosition;
+        Vector2 mainTarget = mainStart + deltaToTarget;
+        Vector2 duplicateStart = duplicateInStart;
+        Vector2 duplicateTarget = duplicateInStart + deltaToTarget;
+        float stepDuration = duration / steps;
+
+        for (int i = 0; i <= steps; i++)
+        {
+            float t = (float)i / steps;
+            // Lerp the main cat to its offscreen target.
+            mainRect.anchoredPosition = Vector2.Lerp(mainStart, mainTarget, t);
+            // Lerp the duplicate from its offscreen start to its final onscreen position.
+            duplicateRect.anchoredPosition = Vector2.Lerp(duplicateStart, duplicateTarget, t);
+            yield return new WaitForSeconds(stepDuration);
+        }
+
+        // Ensure final positions.
+        mainRect.GetComponent<RectTransform>().parent.gameObject.GetComponent<RectTransform>().anchoredPosition = duplicateOutPos;
+        mainRect.anchoredPosition = duplicateTarget;
+
+        // Optionally, disable the duplicate after the transition.
+        duplicateRect.gameObject.SetActive(false);
     }
 
     // Assuming leftPlayerRect is your player's RectTransform.
