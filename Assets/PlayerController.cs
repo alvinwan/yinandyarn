@@ -136,6 +136,10 @@ public class PlayerController : MonoBehaviour
         {
             AnimateAdvanceLevel();
         }
+        if (Input.GetKeyDown(KeyCode.Space) && winScreen.activeSelf)
+        {
+            OnNextClick();
+        }
 
         if (isMoving)
         {
