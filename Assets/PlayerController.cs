@@ -115,6 +115,7 @@ public class PlayerController : MonoBehaviour
     public GameObject winScreen;
     private int moveCounter = 0;
     public TextMeshProUGUI moveCounterText;
+    public TextMeshProUGUI levelNumberText;
 
     void Awake()
     {
@@ -227,6 +228,7 @@ public class PlayerController : MonoBehaviour
     void AnimateVictoryScreen()
     {
         moveCounterText.text = "moves: " + moveCounter + ", world record: " + records[currentLevelIndex];
+        levelNumberText.text = (currentLevelIndex + 1).ToString();
         winScreen.SetActive(true);
     }
 
