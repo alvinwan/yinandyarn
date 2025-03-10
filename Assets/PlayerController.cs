@@ -362,15 +362,6 @@ public class PlayerController : MonoBehaviour
                 0.25f,
                 5
             ));
-            StartCoroutine(MovePlayerWithDuplicate(
-                rightPlayerRect,
-                isOneSided ? null : duplicateRightPlayerRect,
-                new Vector2(cellSpacing, 0),
-                new Vector2(-cellSpacing, 0),
-                GetAnchoredPosition(rightPlayerPos),
-                0.25f,
-                5
-            ));
         }
         else if (direction == Direction.Right && newLeftPos.x < leftMaskRect.anchoredPosition.x)
         {
@@ -383,6 +374,25 @@ public class PlayerController : MonoBehaviour
                 0.25f,
                 5
             ));
+        }
+        else
+        {
+            StartCoroutine(MovePlayers(newLeftPos, leftMaskRect, 0.25f, 5));
+        }
+
+        if (direction == Direction.Left && newRightPos.x < rightMaskRect.anchoredPosition.x)
+        {
+            StartCoroutine(MovePlayerWithDuplicate(
+                rightPlayerRect,
+                isOneSided ? null : duplicateRightPlayerRect,
+                new Vector2(cellSpacing, 0),
+                new Vector2(-cellSpacing, 0),
+                GetAnchoredPosition(rightPlayerPos),
+                0.25f,
+                5
+            ));
+        } else if (direction == Direction.Right && newRightPos.x > rightMaskRect.anchoredPosition.x)
+        {
             StartCoroutine(MovePlayerWithDuplicate(
                 rightPlayerRect,
                 isOneSided ? null : duplicateRightPlayerRect,
@@ -395,7 +405,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            StartCoroutine(MovePlayers(newLeftPos, leftMaskRect, 0.25f, 5));
             StartCoroutine(MovePlayers(newRightPos, rightMaskRect, 0.25f, 5));
         }
     }
