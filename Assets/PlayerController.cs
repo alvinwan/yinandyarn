@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine.Assertions;
 using System.Collections;
 
+public enum Direction
+{
+    Left,
+    Right,
+    Up,
+    Down
+}
+
 public class PlayerController : MonoBehaviour
 {
     // Define several levels as arrays of strings.
@@ -99,6 +107,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // Optional: press L to switch to the next level manually.
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            AdvanceLevel();
+        }
+        
+        if (isMoving)
+        {
+            return;
+        }
+
         // Horizontal movement for left player: valid x range [0, gridHalfWidth-1]
         // For right player: valid x range [gridHalfWidth, gridWidth-1] (mirrored movement)
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
@@ -107,7 +126,7 @@ public class PlayerController : MonoBehaviour
             leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, -1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
             // Right player moves right (mirrored).
             rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, 1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
-            AnimatePlayerPositions();
+            AnimatePlayerPositions(Direction.Left);
         }
         else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -122,7 +141,7 @@ public class PlayerController : MonoBehaviour
                 // Otherwise, perform the normal rightward movement.
                 leftPlayerPos = FindNextValidHorizontal(leftPlayerPos, 1, leftPlayerBounds[0][0], leftPlayerBounds[0][1]);
                 rightPlayerPos = FindNextValidHorizontal(rightPlayerPos, -1, rightPlayerBounds[0][0], rightPlayerBounds[0][1]);
-                AnimatePlayerPositions();
+                AnimatePlayerPositions(Direction.Right);
             }
         }
         // Vertical movement for both players: full vertical range [0, gridHeight - 1]
@@ -131,7 +150,7 @@ public class PlayerController : MonoBehaviour
             leftPlayerPos = FindNextValidVertical(leftPlayerPos, 1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
             // Note: right player moves in the opposite vertical direction.
             rightPlayerPos = FindNextValidVertical(rightPlayerPos, -1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
-            AnimatePlayerPositions();
+            AnimatePlayerPositions(Direction.Left);
         }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -141,14 +160,8 @@ public class PlayerController : MonoBehaviour
             } else {
                 leftPlayerPos = FindNextValidVertical(leftPlayerPos, -1, leftPlayerBounds[1][0], leftPlayerBounds[1][1]);
                 rightPlayerPos = FindNextValidVertical(rightPlayerPos, 1, rightPlayerBounds[1][0], rightPlayerBounds[1][1]);
-                AnimatePlayerPositions();
+                AnimatePlayerPositions(Direction.Left);
             }
-        }
-
-        // Optional: press L to switch to the next level manually.
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            AdvanceLevel();
         }
     }
 
@@ -301,13 +314,9 @@ public class PlayerController : MonoBehaviour
         rightPlayerRect.anchoredPosition = GetAnchoredPosition(rightPlayerPos);
     }
 
-    void AnimatePlayerPositions()
+    void AnimatePlayerPositions(Direction direction)
     {
-        if (isMoving)
-        {
-            return;
-        }
-
+        FlipAnimation(direction == Direction.Right);
         animator.SetTrigger("jump");
         Vector2 newLeftPos = GetAnchoredPosition(leftPlayerPos);
         Vector2 newRightPos = GetAnchoredPosition(rightPlayerPos);
@@ -338,6 +347,16 @@ public class PlayerController : MonoBehaviour
             rightPlayerRect.anchoredPosition = rightTarget;
         }
         isMoving = false;
+    }
+
+    // Assuming leftPlayerRect is your player's RectTransform.
+    // TODO: do this for rightPlayerRect too
+    void FlipAnimation(bool flip)
+    {
+        Vector3 scale = leftPlayerRect.localScale;
+        // If flip is true, set x to negative to mirror the animation.
+        scale.x = Mathf.Abs(scale.x) * (flip ? -1 : 1);
+        leftPlayerRect.localScale = scale;
     }
 
     // Helper method: searches horizontally (within a given x-range) for the next valid cell.
