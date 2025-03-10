@@ -88,7 +88,8 @@ public class PlayerController : MonoBehaviour
     public GameObject verticalBackground;
     public GameObject horizontalBackground;
 
-    private Animator animator;
+    private Animator animatorLeft;
+    private Animator animatorRight;
     private bool isMoving = false;
 
     void Awake()
@@ -102,7 +103,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        animator = GetComponent<Animator>();
+        animatorLeft = GetComponent<Animator>();
+        animatorRight = rightPlayer.GetComponent<Animator>();
+        FlipAnimation(true, rightPlayerRect);
     }
 
     void Update()
@@ -112,7 +115,7 @@ public class PlayerController : MonoBehaviour
         {
             AdvanceLevel();
         }
-        
+
         if (isMoving)
         {
             return;
@@ -316,8 +319,10 @@ public class PlayerController : MonoBehaviour
 
     void AnimatePlayerPositions(Direction direction)
     {
-        FlipAnimation(direction == Direction.Right);
-        animator.SetTrigger("jump");
+        FlipAnimation(direction == Direction.Right, leftPlayerRect);
+        animatorLeft.SetTrigger("jump");
+        FlipAnimation(direction == Direction.Left, rightPlayerRect);
+        animatorRight.SetTrigger("jump");
         Vector2 newLeftPos = GetAnchoredPosition(leftPlayerPos);
         Vector2 newRightPos = GetAnchoredPosition(rightPlayerPos);
         StartCoroutine(MovePlayers(newLeftPos, newRightPos, 0.25f, 6));
@@ -351,12 +356,12 @@ public class PlayerController : MonoBehaviour
 
     // Assuming leftPlayerRect is your player's RectTransform.
     // TODO: do this for rightPlayerRect too
-    void FlipAnimation(bool flip)
+    void FlipAnimation(bool flip, RectTransform playerRect)
     {
-        Vector3 scale = leftPlayerRect.localScale;
+        Vector3 scale = playerRect.localScale;
         // If flip is true, set x to negative to mirror the animation.
         scale.x = Mathf.Abs(scale.x) * (flip ? -1 : 1);
-        leftPlayerRect.localScale = scale;
+        playerRect.localScale = scale;
     }
 
     // Helper method: searches horizontally (within a given x-range) for the next valid cell.
