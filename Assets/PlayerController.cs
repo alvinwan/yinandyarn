@@ -227,6 +227,7 @@ public class PlayerController : MonoBehaviour
 
     void AnimateVictoryScreen()
     {
+        isMoving = true;
         moveCounterText.text = "moves: " + moveCounter + ", world record: " + records[currentLevelIndex];
         levelNumberText.text = (currentLevelIndex + 1).ToString();
         winScreen.SetActive(true);
@@ -236,6 +237,7 @@ public class PlayerController : MonoBehaviour
     {
         winScreen.SetActive(false);
         AdvanceLevel();
+        isMoving = false;
     }
 
     // Loads a level based on the current level layout.
