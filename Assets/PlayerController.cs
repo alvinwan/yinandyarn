@@ -54,6 +54,8 @@ public class PlayerController : MonoBehaviour
         },
     };
 
+    private int[] records = new int[] { 3, 2, 2, 4, 3, 4 };
+
     private int currentLevelIndex = 0;
     private int gridWidth;
     private int gridHeight;
@@ -224,7 +226,7 @@ public class PlayerController : MonoBehaviour
 
     void AnimateVictoryScreen()
     {
-        moveCounterText.text = "Moves: " + moveCounter;
+        moveCounterText.text = "moves: " + moveCounter + ", world record: " + records[currentLevelIndex];
         winScreen.SetActive(true);
     }
 
