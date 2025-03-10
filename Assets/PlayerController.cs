@@ -270,7 +270,7 @@ public class PlayerController : MonoBehaviour
             Debug.Assert(gridHeight % 2 == 0, "Grid height must be even for vertical levels.");
             int gridHalfHeight = gridHeight / 2;
             leftPlayerBounds = new List<List<int>>(){
-                new List<int>(){0, gridWidth},
+                new List<int>(){0, gridWidth - 1},
                 new List<int>(){gridHalfHeight, gridHeight - 1}
             };
             rightPlayerBounds = new List<List<int>>(){
